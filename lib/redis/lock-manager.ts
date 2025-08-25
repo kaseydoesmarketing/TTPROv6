@@ -4,10 +4,32 @@ import { randomUUID } from 'crypto'
 import { SystemLogger } from '@/lib/logging'
 
 export class LockManager {
-  private static redis = new Redis({
-    url: process.env.UPSTASH_REDIS_REST_URL!,
-    token: process.env.UPSTASH_REDIS_REST_TOKEN!,
-  })
+  private static redis: Redis | null = null
+  
+  private static getRedis(): Redis {
+    if (!this.redis) {
+      if (!process.env.UPSTASH_REDIS_REST_URL || !process.env.UPSTASH_REDIS_REST_TOKEN) {
+        console.warn('Redis environment variables not configured')
+        if (process.env.NODE_ENV === 'production') {
+          throw new Error('Redis configuration missing')
+        }
+        // Return mock Redis for build time
+        return {
+          set: async () => 'OK',
+          get: async () => null,
+          del: async () => 1,
+          ttl: async () => -1,
+        } as any
+      }
+      
+      this.redis = new Redis({
+        url: process.env.UPSTASH_REDIS_REST_URL!,
+        token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+      })
+    }
+    
+    return this.redis
+  }
   
   private static readonly TTL = parseInt(process.env.LOCK_TTL_SECONDS || '30')
   private static readonly RETRY_DELAY = parseInt(process.env.LOCK_RETRY_DELAY_MS || '100')
@@ -23,7 +45,7 @@ export class LockManager {
     for (let attempt = 0; attempt < this.MAX_RETRIES; attempt++) {
       try {
         // Try to set lock with NX (only if not exists) and EX (expiry)
-        const acquired = await this.redis.set(lockKey, lockId, {
+        const acquired = await this.getRedis().set(lockKey, lockId, {
           nx: true,
           ex: this.TTL,
         })
@@ -77,9 +99,9 @@ export class LockManager {
       `
       
       // Use eval for atomic operation
-      const currentLockId = await this.redis.get(lockKey)
+      const currentLockId = await this.getRedis().get(lockKey)
       if (currentLockId === lockId) {
-        await this.redis.del(lockKey)
+        await this.getRedis().del(lockKey)
         
         await SystemLogger.debug('lock', 'Lock released', {
           resourceId,
@@ -112,9 +134,9 @@ export class LockManager {
     const lockKey = `lock:${resourceId}`
     
     try {
-      const currentLockId = await this.redis.get(lockKey)
+      const currentLockId = await this.getRedis().get(lockKey)
       if (currentLockId === lockId) {
-        await this.redis.expire(lockKey, this.TTL)
+        await this.getRedis().expire(lockKey, this.TTL)
         
         await SystemLogger.debug('lock', 'Lock extended', {
           resourceId,
@@ -142,7 +164,7 @@ export class LockManager {
     const lockKey = `lock:${resourceId}`
     
     try {
-      const lockId = await this.redis.get(lockKey)
+      const lockId = await this.getRedis().get(lockKey)
       return lockId !== null
     } catch (error) {
       await SystemLogger.error('lock', 'Lock check error', {
@@ -163,13 +185,13 @@ export class LockManager {
     const lockKey = `lock:${resourceId}`
     
     try {
-      const lockId = await this.redis.get(lockKey)
+      const lockId = await this.getRedis().get(lockKey)
       
       if (!lockId) {
         return { locked: false }
       }
       
-      const ttl = await this.redis.ttl(lockKey)
+      const ttl = await this.getRedis().ttl(lockKey)
       
       return {
         locked: true,

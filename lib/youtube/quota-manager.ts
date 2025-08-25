@@ -4,10 +4,32 @@ import { prisma } from '@/lib/prisma'
 import { SystemLogger } from '@/lib/logging'
 
 export class QuotaManager {
-  private static redis = new Redis({
-    url: process.env.UPSTASH_REDIS_REST_URL!,
-    token: process.env.UPSTASH_REDIS_REST_TOKEN!,
-  })
+  private static redis: Redis | null = null
+  
+  private static getRedis(): Redis {
+    if (!this.redis) {
+      if (!process.env.UPSTASH_REDIS_REST_URL || !process.env.UPSTASH_REDIS_REST_TOKEN) {
+        console.warn('Redis environment variables not configured')
+        if (process.env.NODE_ENV === 'production') {
+          throw new Error('Redis configuration missing')
+        }
+        // Return mock Redis for build time
+        return {
+          get: async () => '0',
+          incr: async () => 1,
+          expire: async () => true,
+          del: async () => 1,
+        } as any
+      }
+      
+      this.redis = new Redis({
+        url: process.env.UPSTASH_REDIS_REST_URL!,
+        token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+      })
+    }
+    
+    return this.redis
+  }
   
   private static readonly DAILY_QUOTA = parseInt(process.env.YOUTUBE_DAILY_QUOTA || '10000')
   private static readonly WARNING_THRESHOLD = parseInt(process.env.QUOTA_WARNING_THRESHOLD || '9000')
@@ -33,7 +55,7 @@ export class QuotaManager {
     
     try {
       // Get current usage from Redis (fast cache)
-      let currentUsage = await this.redis.get<number>(cacheKey) || 0
+      let currentUsage = await this.getRedis().get<number>(cacheKey) || 0
       
       // Fallback to database if Redis is empty
       if (currentUsage === 0) {
@@ -43,7 +65,7 @@ export class QuotaManager {
         currentUsage = dbQuota?.totalUnitsUsed || 0
         
         // Cache in Redis with 24-hour expiry
-        await this.redis.set(cacheKey, currentUsage, { ex: 86400 })
+        await this.getRedis().set(cacheKey, currentUsage, { ex: 86400 })
       }
       
       const operationCost = this.COSTS[operation]
@@ -116,10 +138,10 @@ export class QuotaManager {
     
     try {
       // Update Redis cache (atomic increment)
-      const newUsage = await this.redis.incrby(cacheKey, cost)
+      const newUsage = await this.getRedis().incrby(cacheKey, cost)
       
       // Ensure cache has expiry
-      await this.redis.expire(cacheKey, 86400)
+      await this.getRedis().expire(cacheKey, 86400)
       
       // Update database
       const fieldMap: Record<string, string> = {
@@ -235,7 +257,7 @@ export class QuotaManager {
     
     try {
       // Get from Redis first
-      let currentUsage = await this.redis.get<number>(cacheKey) || 0
+      let currentUsage = await this.getRedis().get<number>(cacheKey) || 0
       
       // Check database if Redis is empty
       if (currentUsage === 0) {
@@ -276,7 +298,7 @@ export class QuotaManager {
     
     try {
       // Clear Redis cache
-      await this.redis.del(cacheKey)
+      await this.getRedis().del(cacheKey)
       
       // Reset database entry
       await prisma.quotaUsage.upsert({
