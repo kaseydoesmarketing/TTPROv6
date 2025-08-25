@@ -25,11 +25,11 @@ const nextConfig = {
     return [
       {
         source: '/api/:path*',
-        destination: 'https://ttprov5.onrender.com/api/:path*'
+        destination: 'https://ttprov6-api.onrender.com/api/:path*'
       },
       {
         source: '/health',
-        destination: 'https://ttprov5.onrender.com/health'
+        destination: 'https://ttprov6-api.onrender.com/health'
       }
     ]
   }
