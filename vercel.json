@@ -13,12 +13,5 @@
     "app/api/cron/reset-quotas/route.ts": {
       "maxDuration": 60
     }
-  },
-  "env": {
-    "NEXT_PUBLIC_APP_URL": "@next_public_app_url",
-    "DATABASE_URL": "@database_url",
-    "DIRECT_URL": "@direct_url",
-    "UPSTASH_REDIS_REST_URL": "@upstash_redis_rest_url",
-    "UPSTASH_REDIS_REST_TOKEN": "@upstash_redis_rest_token"
   }
 }
