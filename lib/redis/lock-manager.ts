@@ -173,7 +173,7 @@ export class LockManager {
       
       return {
         locked: true,
-        lockId,
+        lockId: lockId as string,
         ttl: ttl > 0 ? ttl : undefined,
       }
     } catch (error) {
