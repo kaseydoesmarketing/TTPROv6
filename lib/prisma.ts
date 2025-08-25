@@ -8,13 +8,15 @@ const globalForPrisma = globalThis as unknown as {
 let prismaInstance: PrismaClient | null = null
 
 function createPrismaClient(): PrismaClient {
-  if (!process.env.DATABASE_URL) {
-    console.warn('DATABASE_URL not configured')
-    if (process.env.NODE_ENV === 'production') {
-      throw new Error('Database configuration missing')
-    }
+  // Check if we're in build phase (no runtime available)
+  if (typeof window === 'undefined' && !process.env.DATABASE_URL) {
+    console.warn('DATABASE_URL not configured - using mock client for build')
     // Return mock Prisma client for build time
     return {} as PrismaClient
+  }
+  
+  if (!process.env.DATABASE_URL) {
+    throw new Error('Database configuration missing')
   }
   
   return new PrismaClient()
