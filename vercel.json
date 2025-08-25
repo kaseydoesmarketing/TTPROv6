@@ -3,11 +3,7 @@
   "crons": [
     {
       "path": "/api/cron/rotate-titles",
-      "schedule": "*/5 * * * *"
-    },
-    {
-      "path": "/api/cron/reset-quotas", 
-      "schedule": "0 8 * * *"
+      "schedule": "0 */6 * * *"
     }
   ],
   "functions": {
