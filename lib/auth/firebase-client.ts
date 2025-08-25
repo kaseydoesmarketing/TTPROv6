@@ -47,6 +47,11 @@ googleProvider.setCustomParameters({
 
 // Firebase authentication functions (separate from YouTube)
 export async function signInWithGoogle(): Promise<User> {
+  // Check if Firebase is properly initialized
+  if (!app || process.env.NEXT_PUBLIC_FIREBASE_API_KEY === 'placeholder-key') {
+    throw new Error('Firebase not configured. Please add Firebase environment variables to enable authentication.')
+  }
+  
   try {
     const result = await signInWithPopup(auth, googleProvider)
     return result.user

@@ -11,6 +11,7 @@ export default function HomePage() {
   const { user, loading } = useAuth()
   const router = useRouter()
   const [isSigningIn, setIsSigningIn] = useState(false)
+  const [signInError, setSignInError] = useState<string | null>(null)
 
   useEffect(() => {
     if (!loading && user) {
@@ -20,11 +21,14 @@ export default function HomePage() {
 
   const handleSignIn = async () => {
     setIsSigningIn(true)
+    setSignInError(null)
     try {
       await signInWithGoogle()
       // User will be redirected by useEffect
     } catch (error) {
       console.error('Sign in error:', error)
+      const errorMessage = error instanceof Error ? error.message : 'Sign in failed'
+      setSignInError(errorMessage)
       setIsSigningIn(false)
     }
   }
@@ -42,6 +46,16 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 to-gray-100">
+      {/* Demo Mode Banner */}
+      <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white py-2 px-6">
+        <div className="max-w-7xl mx-auto text-center">
+          <p className="text-sm">
+            🚧 <strong>Demo Mode</strong> - This is a showcase deployment. Authentication requires Firebase configuration.
+            <span className="ml-2 text-blue-100">See DEPLOYMENT_COMPLETE.md for setup instructions</span>
+          </p>
+        </div>
+      </div>
+
       {/* Header */}
       <header className="bg-white/80 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 py-4">
@@ -114,6 +128,26 @@ export default function HomePage() {
               No credit card required
             </div>
           </div>
+
+          {/* Error Message */}
+          {signInError && (
+            <div className="max-w-md mx-auto mb-8 p-4 bg-red-50 border border-red-200 rounded-lg">
+              <div className="flex items-start">
+                <svg className="w-5 h-5 text-red-400 mt-0.5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd"/>
+                </svg>
+                <div>
+                  <h3 className="text-sm font-medium text-red-800">Authentication Error</h3>
+                  <p className="text-sm text-red-700 mt-1">{signInError}</p>
+                  {signInError.includes('Firebase not configured') && (
+                    <p className="text-xs text-red-600 mt-2">
+                      This is a demo deployment. The admin needs to configure Firebase environment variables to enable sign-in.
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Features Grid */}
           <div className="grid md:grid-cols-3 gap-8 mb-16">
