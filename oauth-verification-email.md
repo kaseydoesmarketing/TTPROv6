@@ -13,12 +13,12 @@ I am writing to request verification for our OAuth 2.0 application **TitleTester
 ## Application Details
 
 **Application Name:** TitleTesterPro v6  
-**Client ID:** [Your OAuth Client ID]  
+**Client ID:** 564429395545-m42iai74gugv53sqdob1tpuhs590ua5r.apps.googleusercontent.com  
 **Developer Email:** CaseyDoesMarketing@gmail.com  
 **Company:** TitleTesterPro  
-**Website:** [TBD - V6 Production URL]  
-**Privacy Policy:** [TBD - V6 Privacy URL]  
-**Terms of Service:** [TBD - V6 Terms URL]  
+**Website:** https://titletesterpro.com  
+**Privacy Policy:** https://titletesterpro.com/privacy  
+**Terms of Service:** https://titletesterpro.com/terms  
 
 ## Business Purpose & Justification
 
@@ -103,9 +103,9 @@ We respectfully request verification for:
 
 ## Additional Documentation
 
-All required documentation will be available at:
-- **Privacy Policy:** [Production URL]/privacy
-- **Terms of Service:** [Production URL]/terms  
+All required documentation is available at:
+- **Privacy Policy:** https://titletesterpro.com/privacy
+- **Terms of Service:** https://titletesterpro.com/terms  
 - **Technical Documentation:** Available upon request
 - **Security Assessment:** Available upon request
 - **Statistical Analysis Methodology:** Available upon request
