@@ -1,4 +1,5 @@
 import { Suspense } from 'react'
+import GoogleSignInButton from '@/components/GoogleSignInButton'
 
 export default function AppDashboard() {
   return (
@@ -22,9 +23,7 @@ export default function AppDashboard() {
               Sign in with Google to access your dashboard and start testing your titles.
             </p>
             
-            <button className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
-              Sign In with Google
-            </button>
+            <GoogleSignInButton />
           </div>
         </div>
 
