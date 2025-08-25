@@ -1,4 +1,5 @@
 {
+  "name": "titletesterpro-v6",
   "crons": [
     {
       "path": "/api/cron/rotate-titles",
