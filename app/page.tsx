@@ -3,6 +3,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { useAuth } from '@/providers/auth-provider'
 import { signInWithGoogle } from '@/lib/auth/firebase-client'
 import { SystemLogger } from '@/lib/logging'
