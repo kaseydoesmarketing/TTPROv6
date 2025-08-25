@@ -2,7 +2,9 @@
 
 ## ✅ SUCCESSFULLY DEPLOYED
 
-**Production URL:** https://titletesterpro-v6-7ykt60bk1-ttpro.vercel.app
+**Production URL:** https://titletesterpro.com (Primary)
+**Alternate URL:** https://www.titletesterpro.com
+**Vercel URL:** https://titletesterpro-v6-92a25a7mp-ttpro-live.vercel.app
 
 **GitHub Repository:** https://github.com/kaseydoesmarketing/TTPROv6
 
@@ -152,8 +154,8 @@ npx prisma migrate deploy
 
 ## 🔗 IMPORTANT LINKS
 
-- **Production App**: https://titletesterpro-v6-7ykt60bk1-ttpro.vercel.app
-- **Vercel Dashboard**: https://vercel.com/ttpro/titletesterpro-v6
+- **Production App**: https://titletesterpro.com
+- **Vercel Dashboard**: https://vercel.com/ttpro-live/titletesterpro-v6
 - **GitHub Repo**: https://github.com/kaseydoesmarketing/TTPROv6
 - **Deployment Config**: `vercel.json`
 - **Database Schema**: `prisma/schema.prisma`
