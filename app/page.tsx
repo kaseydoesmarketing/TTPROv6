@@ -225,8 +225,21 @@ export default function HomePage() {
       {/* Footer */}
       <footer className="border-t border-gray-200 bg-white/50 backdrop-blur-sm mt-16">
         <div className="max-w-7xl mx-auto px-6 py-8">
-          <div className="text-center text-gray-500 text-sm">
-            <p>&copy; 2024 TitleTesterPro v6. Built for serious YouTube creators.</p>
+          <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+            <div className="flex space-x-6">
+              <Link href="/privacy" className="text-gray-500 hover:text-gray-700 text-sm transition-colors">
+                Privacy Policy
+              </Link>
+              <Link href="/terms" className="text-gray-500 hover:text-gray-700 text-sm transition-colors">
+                Terms & Conditions
+              </Link>
+              <Link href="mailto:support@titletesterpro.com" className="text-gray-500 hover:text-gray-700 text-sm transition-colors">
+                Support
+              </Link>
+            </div>
+            <p className="text-gray-500 text-sm">
+              &copy; 2024 TitleTesterPro v6. Built for serious YouTube creators.
+            </p>
           </div>
         </div>
       </footer>

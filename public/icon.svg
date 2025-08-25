@@ -1,0 +1,44 @@
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Circle with v6 styling -->
+  <circle cx="60" cy="60" r="50" fill="url(#gradientIconV6)" stroke="#DC2626" stroke-width="3"/>
+  
+  <!-- Advanced Testing Network Icon -->
+  <g transform="translate(30, 30)">
+    <!-- Central Processing Hub -->
+    <circle cx="30" cy="30" r="10" fill="white"/>
+    
+    <!-- Automated Testing Nodes -->
+    <circle cx="8" cy="8" r="7" fill="#FEF2F2" stroke="white" stroke-width="2.5"/>
+    <circle cx="52" cy="8" r="7" fill="#FEF2F2" stroke="white" stroke-width="2.5"/>
+    <circle cx="8" cy="52" r="7" fill="#FEF2F2" stroke="white" stroke-width="2.5"/>
+    <circle cx="52" cy="52" r="7" fill="#FEF2F2" stroke="white" stroke-width="2.5"/>
+    
+    <!-- Data Flow Lines -->
+    <line x1="30" y1="30" x2="15" y2="15" stroke="white" stroke-width="3" opacity="0.95"/>
+    <line x1="30" y1="30" x2="45" y2="15" stroke="white" stroke-width="3" opacity="0.95"/>
+    <line x1="30" y1="30" x2="15" y2="45" stroke="white" stroke-width="3" opacity="0.95"/>
+    <line x1="30" y1="30" x2="45" y2="45" stroke="white" stroke-width="3" opacity="0.95"/>
+    
+    <!-- A/B Testing Labels -->
+    <text x="4" y="13" fill="white" font-family="Arial, sans-serif" font-size="9" font-weight="bold">A</text>
+    <text x="48" y="13" fill="white" font-family="Arial, sans-serif" font-size="9" font-weight="bold">B</text>
+    
+    <!-- v6 AI Indicator -->
+    <text x="25" y="35" fill="white" font-family="Arial, sans-serif" font-size="6" font-weight="bold">v6</text>
+  </g>
+  
+  <!-- v6 Badge -->
+  <rect x="85" y="15" width="25" height="15" rx="7.5" fill="white" stroke="#DC2626" stroke-width="1"/>
+  <text x="97.5" y="25" fill="#DC2626" font-family="Arial, sans-serif" font-size="10" font-weight="bold" text-anchor="middle">
+    v6
+  </text>
+  
+  <!-- Gradients -->
+  <defs>
+    <linearGradient id="gradientIconV6" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#DC2626;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#EF4444;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#F87171;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+</svg>

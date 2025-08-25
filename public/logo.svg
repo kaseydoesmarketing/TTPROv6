@@ -1,0 +1,61 @@
+<svg width="400" height="120" viewBox="0 0 400 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Circle with v6 styling -->
+  <circle cx="60" cy="60" r="50" fill="url(#gradientV6)" stroke="#DC2626" stroke-width="2"/>
+  
+  <!-- Advanced Testing Network Icon -->
+  <g transform="translate(30, 30)">
+    <!-- Central Processing Hub -->
+    <circle cx="30" cy="30" r="8" fill="white"/>
+    
+    <!-- Automated Testing Nodes -->
+    <circle cx="12" cy="12" r="5" fill="#FEF2F2" stroke="white" stroke-width="2"/>
+    <circle cx="48" cy="12" r="5" fill="#FEF2F2" stroke="white" stroke-width="2"/>
+    <circle cx="12" cy="48" r="5" fill="#FEF2F2" stroke="white" stroke-width="2"/>
+    <circle cx="48" cy="48" r="5" fill="#FEF2F2" stroke="white" stroke-width="2"/>
+    
+    <!-- Data Flow Lines -->
+    <line x1="30" y1="30" x2="17" y2="17" stroke="white" stroke-width="2.5" opacity="0.9"/>
+    <line x1="30" y1="30" x2="43" y2="17" stroke="white" stroke-width="2.5" opacity="0.9"/>
+    <line x1="30" y1="30" x2="17" y2="43" stroke="white" stroke-width="2.5" opacity="0.9"/>
+    <line x1="30" y1="30" x2="43" y2="43" stroke="white" stroke-width="2.5" opacity="0.9"/>
+    
+    <!-- Animated pulse indicators -->
+    <circle cx="30" cy="8" r="3" fill="#FCA5A5" opacity="0.8"/>
+    <circle cx="52" cy="30" r="3" fill="#FCA5A5" opacity="0.8"/>
+    
+    <!-- A/B Testing Labels -->
+    <text x="8" y="16" fill="white" font-family="Arial, sans-serif" font-size="7" font-weight="bold">A</text>
+    <text x="44" y="16" fill="white" font-family="Arial, sans-serif" font-size="7" font-weight="bold">B</text>
+    
+    <!-- v6 Statistical Indicator -->
+    <text x="26" y="35" fill="white" font-family="Arial, sans-serif" font-size="5" font-weight="bold">AI</text>
+  </g>
+  
+  <!-- Company Name -->
+  <text x="130" y="45" fill="#DC2626" font-family="Arial, sans-serif" font-size="28" font-weight="800" letter-spacing="-1">
+    TitleTester
+  </text>
+  <text x="130" y="75" fill="#EF4444" font-family="Arial, sans-serif" font-size="20" font-weight="600" letter-spacing="1">
+    PRO
+  </text>
+  
+  <!-- v6 Badge -->
+  <rect x="330" y="45" width="35" height="18" rx="9" fill="#DC2626"/>
+  <text x="347.5" y="57" fill="white" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle">
+    v6
+  </text>
+  
+  <!-- Advanced Tagline -->
+  <text x="130" y="95" fill="#6B7280" font-family="Arial, sans-serif" font-size="12" font-weight="400">
+    Automated A/B Testing
+  </text>
+  
+  <!-- Gradients -->
+  <defs>
+    <linearGradient id="gradientV6" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#DC2626;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#EF4444;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#F87171;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+</svg>
