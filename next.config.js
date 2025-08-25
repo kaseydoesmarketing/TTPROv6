@@ -24,8 +24,12 @@ const nextConfig = {
   async rewrites() {
     return [
       {
+        source: '/api/:path*',
+        destination: 'https://ttprov5.onrender.com/api/:path*'
+      },
+      {
         source: '/health',
-        destination: '/api/health'
+        destination: 'https://ttprov5.onrender.com/health'
       }
     ]
   }
