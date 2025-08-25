@@ -1,0 +1,177 @@
+// Database schema for TitleTesterPro v6
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id                    String    @id @default(uuid())
+  firebaseUid           String    @unique
+  email                 String    @unique
+  name                  String?
+  pictureUrl            String?
+  
+  // YouTube OAuth tokens (SEPARATE from Firebase)
+  youtubeAccessToken    String?   @db.Text // Encrypted
+  youtubeRefreshToken   String?   @db.Text // Encrypted
+  youtubeTokenExpiry    DateTime?
+  youtubeChannelId      String?
+  youtubeChannelName    String?
+  youtubeConnectionValid Boolean  @default(false)
+  
+  // Quota management
+  dailyApiUnitsUsed     Int       @default(0)
+  dailyTitleChanges     Int       @default(0)
+  lastQuotaReset        DateTime  @default(now())
+  maxDailyCampaigns     Int       @default(3)
+  
+  campaigns             Campaign[]
+  
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  
+  @@index([firebaseUid])
+  @@index([youtubeConnectionValid])
+}
+
+model Campaign {
+  id                    String    @id @default(uuid())
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Video information
+  videoId               String    @db.VarChar(11)
+  videoTitle            String
+  originalTitle         String    @db.Text
+  thumbnailUrl          String?
+  channelId             String    @db.VarChar(24)
+  
+  // Test configuration
+  titleVariations       Json      // String array ["Title 1", "Title 2", ...]
+  rotationHours         Int       // Min: 1, Max: 24
+  totalDurationHours    Int       // Min: 6, Max: 168
+  
+  // Current state
+  status                CampaignStatus @default(PENDING)
+  currentTitleIndex     Int       @default(0)
+  currentTitle          String?   @db.Text
+  
+  // Scheduling
+  nextRotationAt        DateTime?
+  startsAt              DateTime  @default(now())
+  endsAt                DateTime
+  completedAt           DateTime?
+  pausedAt              DateTime?
+  
+  // Results
+  winningTitle          String?   @db.Text
+  winningTitleIndex     Int?
+  winningVph            Float?    // Views Per Hour
+  improvementPercent    Float?
+  confidenceLevel       Float?
+  totalViewsGained      Int?
+  
+  // Error tracking
+  lastError             String?
+  errorCount            Int       @default(0)
+  consecutiveErrors     Int       @default(0)
+  
+  rotations             Rotation[]
+  
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  
+  @@index([userId, status])
+  @@index([status, nextRotationAt])
+  @@index([videoId])
+}
+
+model Rotation {
+  id                    String    @id @default(uuid())
+  campaignId            String
+  campaign              Campaign  @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  
+  title                 String    @db.Text
+  titleIndex            Int
+  
+  // Timing (CRITICAL for VPH calculation)
+  activatedAt           DateTime  @default(now())
+  deactivatedAt         DateTime?
+  durationSeconds       Int?      // Calculated on deactivation
+  
+  // Snapshot metrics (from YouTube Data API)
+  viewsStart            Int       // Snapshot when title activated
+  viewsEnd              Int?      // Snapshot when title deactivated
+  viewsGained           Int?      // viewsEnd - viewsStart
+  
+  // Normalized metric (PRIMARY SUCCESS METRIC)
+  viewsPerHour          Float?    // (viewsGained / durationSeconds) * 3600
+  
+  // Operation status
+  snapshotSuccess       Boolean   @default(false)
+  youtubeUpdateSuccess  Boolean   @default(false)
+  errorMessage          String?
+  
+  createdAt             DateTime  @default(now())
+  
+  @@index([campaignId, activatedAt])
+  @@index([campaignId, viewsPerHour])
+}
+
+model QuotaUsage {
+  id                    String    @id @default(uuid())
+  date                  DateTime  @db.Date @unique
+  
+  totalUnitsUsed        Int       @default(0)
+  videoListCalls        Int       @default(0)  // 1 unit each
+  videoUpdateCalls      Int       @default(0)  // 50 units each
+  
+  peakHourUtc           Int?
+  peakHourUsage         Int?
+  
+  circuitBreakerTripped Boolean   @default(false)
+  
+  createdAt             DateTime  @default(now())
+  
+  @@index([date])
+}
+
+model SystemLog {
+  id                    String    @id @default(uuid())
+  level                 LogLevel
+  category              String    // auth, youtube, cron, campaign
+  message               String
+  metadata              Json?
+  userId                String?
+  campaignId            String?
+  
+  createdAt             DateTime  @default(now())
+  
+  @@index([level, category])
+  @@index([userId])
+  @@index([campaignId])
+}
+
+enum CampaignStatus {
+  PENDING
+  ACTIVE
+  PAUSED
+  COMPLETED
+  ERROR
+  QUOTA_EXCEEDED
+  AUTH_FAILED
+  CANCELLED
+}
+
+enum LogLevel {
+  DEBUG
+  INFO
+  WARN
+  ERROR
+  CRITICAL
+}
