@@ -24,11 +24,27 @@ const firebaseConfig = {
 let app: any = null
 let auth: any = null
 
+// Check if we're in browser and have valid config
+const isValidConfig = typeof window !== 'undefined' && 
+  firebaseConfig.apiKey && 
+  firebaseConfig.apiKey !== 'placeholder-key'
+
 try {
-  app = initializeApp(firebaseConfig)
-  auth = getAuth(app)
+  if (isValidConfig) {
+    app = initializeApp(firebaseConfig)
+    auth = getAuth(app)
+    console.log('Firebase client initialized successfully with project:', firebaseConfig.projectId)
+  } else {
+    console.warn('Firebase config not available or invalid - using mock')
+    // Mock auth for SSR/build time
+    auth = {
+      currentUser: null,
+      onAuthStateChanged: () => () => {},
+      signOut: () => Promise.resolve(),
+    }
+  }
 } catch (error) {
-  console.warn('Firebase client initialization failed - using mock for build time:', error)
+  console.error('Firebase client initialization failed:', error)
   // Mock auth for build time
   auth = {
     currentUser: null,
@@ -48,16 +64,27 @@ googleProvider.setCustomParameters({
 // Firebase authentication functions (separate from YouTube)
 export async function signInWithGoogle(): Promise<User> {
   // Check if Firebase is properly initialized
-  if (!app || process.env.NEXT_PUBLIC_FIREBASE_API_KEY === 'placeholder-key') {
+  if (!app || !isValidConfig) {
     throw new Error('Firebase not configured. Please add Firebase environment variables to enable authentication.')
   }
   
   try {
     const result = await signInWithPopup(auth, googleProvider)
+    console.log('Google sign-in successful for user:', result.user.email)
     return result.user
-  } catch (error) {
+  } catch (error: any) {
     console.error('Firebase auth error:', error)
-    throw error
+    
+    // Provide user-friendly error messages
+    if (error.code === 'auth/popup-closed-by-user') {
+      throw new Error('Sign-in cancelled. Please try again.')
+    } else if (error.code === 'auth/popup-blocked') {
+      throw new Error('Popup blocked. Please allow popups and try again.')
+    } else if (error.code === 'auth/network-request-failed') {
+      throw new Error('Network error. Please check your connection and try again.')
+    } else {
+      throw new Error('Failed to sign in with Google. Please try again.')
+    }
   }
 }
 
