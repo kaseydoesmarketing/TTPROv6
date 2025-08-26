@@ -53,6 +53,13 @@ export default function HomePage() {
             </div>
           </div>
         </div>
+        
+        <footer className="mt-16 text-center">
+          <div className="flex justify-center space-x-6 text-sm text-gray-500">
+            <Link href="/privacy" className="hover:text-gray-700">Privacy Policy</Link>
+            <Link href="/terms" className="hover:text-gray-700">Terms of Service</Link>
+          </div>
+        </footer>
       </div>
     </div>
   )
