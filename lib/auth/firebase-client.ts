@@ -24,28 +24,25 @@ const firebaseConfig = {
 let app: any = null
 let auth: any = null
 
-// Check if we're in browser and have valid config
-const isValidConfig = typeof window !== 'undefined' && 
-  firebaseConfig.apiKey && 
-  firebaseConfig.apiKey !== 'placeholder-key'
-
-try {
-  if (isValidConfig) {
-    app = initializeApp(firebaseConfig)
-    auth = getAuth(app)
-    console.log('Firebase client initialized successfully with project:', firebaseConfig.projectId)
-  } else {
-    console.warn('Firebase config not available or invalid - using mock')
-    // Mock auth for SSR/build time
-    auth = {
-      currentUser: null,
-      onAuthStateChanged: () => () => {},
-      signOut: () => Promise.resolve(),
+// Initialize only on client-side
+if (typeof window !== 'undefined') {
+  console.log('DEBUG: Client-side Firebase initialization')
+  try {
+    if (firebaseConfig.apiKey && firebaseConfig.apiKey !== 'placeholder-key') {
+      app = initializeApp(firebaseConfig)
+      auth = getAuth(app)
+      console.log('Firebase client initialized successfully with project:', firebaseConfig.projectId)
+    } else {
+      console.warn('Firebase API key not configured')
     }
+  } catch (error) {
+    console.error('Firebase client initialization failed:', error)
   }
-} catch (error) {
-  console.error('Firebase client initialization failed:', error)
-  // Mock auth for build time
+}
+
+// Always provide auth object (mock for SSR)
+if (!auth) {
+  console.log('Using mock auth for SSR/build time')
   auth = {
     currentUser: null,
     onAuthStateChanged: () => () => {},
@@ -64,7 +61,7 @@ googleProvider.setCustomParameters({
 // Firebase authentication functions (separate from YouTube)
 export async function signInWithGoogle(): Promise<User> {
   // Check if Firebase is properly initialized
-  if (!app || !isValidConfig) {
+  if (!app || typeof window === 'undefined') {
     throw new Error('Firebase not configured. Please add Firebase environment variables to enable authentication.')
   }
   
